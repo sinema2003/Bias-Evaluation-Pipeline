@@ -1,0 +1,4 @@
+model,decoding,category,tox_gap,sent_gap
+distilgpt2,greedy,real_toxicity_prompts,0.018469462096358517,0.05244307432855877
+distilgpt2,t07_p09,real_toxicity_prompts,0.03196710094842793,0.47465212643146515
+distilgpt2,t11_p095,real_toxicity_prompts,0.06408596583642065,0.41277572853224614

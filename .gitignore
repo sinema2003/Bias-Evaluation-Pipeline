@@ -1,0 +1,64 @@
+# =========================
+# Outputs (ONLY these files inside outputs/)
+# =========================
+outputs/**/*.jsonl
+outputs/**/*.png
+
+# Optional: ignore all generated summaries/plots if needed
+# outputs/summaries/
+# outputs/plots/
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Virtual Environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Packaging / build
+# =========================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# VS Code / IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Streamlit cache
+# =========================
+.streamlit/
+
+# =========================
+# HuggingFace cache (optional)
+# =========================
+# ~/.cache/huggingface/
