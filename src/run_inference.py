@@ -11,7 +11,12 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from src.io_utils import read_jsonl, write_jsonl
 from src.config import default_decoding_configs
-from src.prompt_sources import REAL_TOXICITY_PROMPTS_ID, load_real_toxicity_prompts
+from src.prompt_sources import (
+    REAL_TOXICITY_PROMPTS_ID,
+    CROWS_PAIRS_ID,
+    load_real_toxicity_prompts,
+    load_crows_pairs_prompts,
+)
 
 
 def _device():
@@ -41,9 +46,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument(
         "--prompt-source",
-        choices=["jsonl", "rtp"],
+        choices=["jsonl", "rtp", "crows"],
         default="rtp",
-        help="rtp = Allen AI Real Toxicity Prompts (Gehman et al., 2020); jsonl = local file.",
+        help=(
+            "rtp = Allen AI Real Toxicity Prompts (Gehman et al., 2020); "
+            "crows = CrowS-Pairs (Nangia et al., 2020); "
+            "jsonl = local file."
+        ),
     )
     ap.add_argument(
         "--prompts",
@@ -61,6 +70,23 @@ def main():
         type=int,
         default=42,
         help="Shuffle seed for the streaming RTP subset.",
+    )
+    ap.add_argument(
+        "--crows-max-prompts",
+        type=int,
+        default=30,
+        help="How many CrowS-Pairs rows to use.",
+    )
+    ap.add_argument(
+        "--crows-seed",
+        type=int,
+        default=42,
+        help="Shuffle seed for CrowS-Pairs.",
+    )
+    ap.add_argument(
+        "--crows-split",
+        default="test",
+        help="Dataset split for CrowS-Pairs.",
     )
     ap.add_argument("--model", default="distilgpt2")
     ap.add_argument("--run_id", default=None)
@@ -101,13 +127,23 @@ def main():
     if args.prompt_source == "jsonl":
         prompts = read_jsonl(args.prompts)
         prompt_ref = args.prompts
-    else:
+    elif args.prompt_source == "rtp":
         prompts = load_real_toxicity_prompts(
             max_items=args.rtp_max_prompts,
             seed=args.rtp_seed,
         )
         prompt_ref = (
             f"{REAL_TOXICITY_PROMPTS_ID} max={args.rtp_max_prompts} seed={args.rtp_seed}"
+        )
+    else:
+        prompts = load_crows_pairs_prompts(
+            max_items=args.crows_max_prompts,
+            seed=args.crows_seed,
+            split=args.crows_split,
+        )
+        prompt_ref = (
+            f"{CROWS_PAIRS_ID} split={args.crows_split} "
+            f"max={args.crows_max_prompts} seed={args.crows_seed}"
         )
     log.info(
         "Loaded %d prompt row(s) in %.2fs (%s)",
@@ -182,9 +218,16 @@ def main():
         "model": args.model,
         "samples": args.samples,
         "prompt_source": args.prompt_source,
-        "prompt_file": args.prompts if args.prompt_source == "jsonl" else REAL_TOXICITY_PROMPTS_ID,
+        "prompt_file": (
+            args.prompts
+            if args.prompt_source == "jsonl"
+            else (REAL_TOXICITY_PROMPTS_ID if args.prompt_source == "rtp" else CROWS_PAIRS_ID)
+        ),
         "rtp_max_prompts": args.rtp_max_prompts if args.prompt_source == "rtp" else None,
         "rtp_seed": args.rtp_seed if args.prompt_source == "rtp" else None,
+        "crows_max_prompts": args.crows_max_prompts if args.prompt_source == "crows" else None,
+        "crows_seed": args.crows_seed if args.prompt_source == "crows" else None,
+        "crows_split": args.crows_split if args.prompt_source == "crows" else None,
         "decodings": [d.name for d in decs],
         "device": _device(),
     }
