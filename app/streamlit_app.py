@@ -232,7 +232,7 @@ if os.path.exists(enriched_path):
                     )
                     payload = {
                         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-                        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 25000},
+                        "generationConfig": {"temperature": 0.2, "maxOutputTokens": 250000},
                     }
                     req = Request(
                         endpoint,
