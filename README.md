@@ -19,22 +19,22 @@ flowchart TD
   PS --> CROWS[CrowS-Pairs loader]
   PS --> JSONL[Local prompts.jsonl]
 
-  INF --> GEN[LLM generation<br/>Transformers]
-  GEN --> MET[metrics.py<br/>toxicity + sentiment]
-  MET --> OUTRUNS[outputs/runs/<run_id>.jsonl]
+  INF --> GEN[LLM generation Transformers]
+  GEN --> MET[metrics.py toxicity sentiment]
+  MET --> OUTRUNS[outputs/runs/run_id.jsonl]
 
-  OUTRUNS --> AGG[aggregate.py<br/>group stats + gaps + enriched jsonl]
-  AGG --> OUTSUM[outputs/summaries/<run_id>.summary.csv]
-  AGG --> OUTGAPS[outputs/summaries/<run_id>.gaps.csv]
-  AGG --> OUTENR[outputs/summaries/<run_id>.enriched.jsonl]
+  OUTRUNS --> AGG[aggregate.py group stats gaps enriched jsonl]
+  AGG --> OUTSUM[outputs/summaries/run_id.summary.csv]
+  AGG --> OUTGAPS[outputs/summaries/run_id.gaps.csv]
+  AGG --> OUTENR[outputs/summaries/run_id.enriched.jsonl]
 
-  AGG --> PLOT[report.py<br/>optional charts (png)]
+  AGG --> PLOT[report.py optional charts png]
   PLOT --> PLOTDIR[outputs/plots/]
 
   DASH -->|reads| OUTSUM
   DASH -->|reads| OUTENR
 
-  DASH -->|button click| GEM[Gemini API call<br/>summarize enriched.jsonl]
+  DASH -->|button click| GEM[Gemini API call summarize enriched.jsonl]
   GEM -->|render markdown| DASH
 ```
 
